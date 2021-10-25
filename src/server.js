@@ -4,7 +4,9 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
 const base64 = require('base-64');
+require('dotenv').config();
 const { Sequelize, DataTypes } = require('sequelize');
+let DATABASE_URL = process.env.DATABASE_URL || 'sqlite:memory';
 
 // Prepare the express app
 const app = express();
@@ -12,7 +14,7 @@ const app = express();
 // Process JSON input and put the data on req.body
 app.use(express.json());
 
-const sequelize = new Sequelize(process.env.DATABASE_URL);
+const sequelize = new Sequelize(DATABASE_URL);
 
 // Process FORM intput and put the data on req.body
 app.use(express.urlencoded({ extended: true }));
@@ -83,11 +85,19 @@ app.post('/signin', async (req, res) => {
 });
 
 // make sure our tables are created, start up the HTTP server.
-sequelize
-  .sync()
-  .then(() => {
-    app.listen(3000, () => console.log('server up'));
-  })
-  .catch(e => {
-    console.error('Could not start server', e.message);
-  });
+// sequelize
+//   .sync()
+//   .then(() => {
+//     app.listen(3000, () => console.log('server up'));
+//   })
+//   .catch(e => {
+//     console.error('Could not start server', e.message);
+//   });
+
+module.exports = {
+  server: app,
+  sequelize,
+  start: port => {
+    app.listen(port, () => console.log('Server is up')), port;
+  },
+};
