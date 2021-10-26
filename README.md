@@ -19,7 +19,7 @@ Deploy an Express server that implements Basic Authentication, with signup and s
 
 ## Links to application deployment
 
-PR: https://github.com/tripppdx/basic-auth/pull/2
+PR: https://github.com/tripppdx/basic-auth/pull/3
 
 ## Visual
 
