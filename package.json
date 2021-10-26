@@ -1,7 +1,7 @@
 {
-  "name": "server",
+  "name": "basic-auth",
   "version": "1.0.0",
-  "description": "",
+  "description": "Basic Authentication, with signup and signin capabilities",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
