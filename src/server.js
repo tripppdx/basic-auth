@@ -6,6 +6,7 @@ const bcrypt = require('bcrypt');
 const base64 = require('base-64');
 require('dotenv').config();
 const { Sequelize, DataTypes } = require('sequelize');
+const Users = require('./auth/model/user-model.js');
 let DATABASE_URL = process.env.DATABASE_URL || 'sqlite:memory';
 
 // Prepare the express app
@@ -19,17 +20,12 @@ const sequelize = new Sequelize(DATABASE_URL);
 // Process FORM intput and put the data on req.body
 app.use(express.urlencoded({ extended: true }));
 
-// Create a Sequelize model
-const Users = sequelize.define('User', {
-  username: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  password: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
+Users.beforeCreate(async user => {
+  let encryptedPassword = await bcrypt.hash(user.password, 10);
+  user.password = encryptedPassword;
+  console.log('BEFORECREATE', user.password);
 });
+// Create a Sequelize model
 
 // Signup Route -- create a new user
 // Two ways to test this route with httpie
@@ -39,6 +35,7 @@ app.post('/signup', async (req, res) => {
   try {
     req.body.password = await bcrypt.hash(req.body.password, 10);
     const record = await Users.create(req.body);
+    // console.log(record);
     res.status(200).json(record);
   } catch (e) {
     res.status(403).send('Error Creating User');
