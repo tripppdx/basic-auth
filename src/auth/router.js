@@ -4,13 +4,11 @@ const { Users } = require('./models/user-model.js');
 const bcrypt = require('bcrypt');
 const base64 = require('base-64');
 
-Users.beforeCreate(async user => {
-  let encryptedPassword = await bcrypt.hash(user.password, 10);
-  user.password = encryptedPassword;
-  console.log('BEFORECREATE', user.password);
-});
-
-// Create a Sequelize model
+// Users.beforeCreate(async user => {
+//   let encryptedPassword = await bcrypt.hash(user.password, 10);
+//   user.password = encryptedPassword;
+//   console.log('BEFORECREATE', user.password);
+// });
 
 // Signup Route -- create a new user
 // Two ways to test this route with httpie
@@ -40,11 +38,11 @@ router.post('/signin', async (req, res) => {
       - Split on ':' to turn it into an array
       - Pull username and password from that array
   */
-
   let basicHeaderParts = req.headers.authorization.split(' '); // ['Basic', 'sdkjdsljd=']
   let encodedString = basicHeaderParts.pop(); // sdkjdsljd=
   let decodedString = base64.decode(encodedString); // "username:password"
   let [username, password] = decodedString.split(':'); // username, password
+  console.log(username, password);
 
   /*
     Now that we finally have username and password, let's see if it's valid
@@ -56,9 +54,12 @@ router.post('/signin', async (req, res) => {
   try {
     const user = await Users.findOne({ where: { username: username } });
     const valid = await bcrypt.compare(password, user.password);
+    console.log('---------> SIGNIN', password, user.password, valid);
+
     if (valid) {
       res.status(200).json(user);
     } else {
+      console.log('---------> ERROR');
       throw new Error('Invalid User');
     }
   } catch (error) {
@@ -67,3 +68,6 @@ router.post('/signin', async (req, res) => {
 });
 
 module.exports = router;
+
+// $2b$10$B0y40QoWK5aKWtLOxeEPPOouUG7SAFYLNKRa.dAkvnxNMv6w7DpUG
+// $2b$10$B0y40QoWK5aKWtLOxeEPPOouUG7SAFYLNKRa.dAkvnxNMv6w7DpUG

@@ -2,6 +2,8 @@
 
 const { Sequelize, DataTypes } = require('sequelize');
 let DATABASE_URL = process.env.DATABASE_URL || 'sqlite:memory';
+
+// Create a Sequelize model
 const sequelize = new Sequelize(DATABASE_URL);
 
 const Users = sequelize.define('User', {
